@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Shortener Utility</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+}
+
+.container{
+    width:500px;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    color:#333;
+}
+
+.input-group{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+input{
+    padding:12px;
+    border:2px solid #ddd;
+    border-radius:8px;
+    font-size:16px;
+}
+
+button{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:#667eea;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    background:#4c63d2;
+}
+
+.result{
+    margin-top:20px;
+    padding:15px;
+    background:#f4f4f4;
+    border-radius:10px;
+    display:none;
+}
+
+.result p{
+    margin:10px 0;
+}
+
+.short-url{
+    color:#4c63d2;
+    font-weight:bold;
+    word-break:break-all;
+}
+
+.copy-btn{
+    margin-top:10px;
+    width:100%;
+}
+
+.redirect-btn{
+    background:#28a745;
+    margin-top:10px;
+}
+
+.redirect-btn:hover{
+    background:#218838;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>URL Shortener Utility</h1>
+
+<div class="input-group">
+<input type="url" id="longUrl"
+placeholder="Enter Long URL">
+
+<button onclick="shortenURL()">
+Generate Short URL
+</button>
+</div>
+
+<div class="result" id="result">
+
+<p><strong>Original URL:</strong></p>
+<p id="original"></p>
+
+<p><strong>Short URL:</strong></p>
+<p class="short-url" id="shortUrl"></p>
+
+<button class="copy-btn"
+onclick="copyURL()">
+Copy Short URL
+</button>
+
+<button class="redirect-btn"
+onclick="redirectURL()">
+Test Redirect
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+let urlDatabase = {};
+
+function generateID(length=6){
+    const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    let id = "";
+
+    for(let i=0;i<length;i++){
+        id += chars.charAt(
+        Math.floor(Math.random()*chars.length)
+        );
+    }
+
+    return id;
+}
+
+function shortenURL(){
+
+    const longUrl =
+    document.getElementById("longUrl").value;
+
+    if(!longUrl){
+        alert("Please enter a URL");
+        return;
+    }
+
+    const shortID = generateID();
+
+    urlDatabase[shortID] = longUrl;
+
+    const shortLink =
+    window.location.origin + "/" + shortID;
+
+    document.getElementById("original")
+    .innerText = longUrl;
+
+    document.getElementById("shortUrl")
+    .innerText = shortLink;
+
+    document.getElementById("result")
+    .style.display = "block";
+}
+
+function copyURL(){
+
+    const shortLink =
+    document.getElementById("shortUrl").innerText;
+
+    navigator.clipboard.writeText(shortLink);
+
+    alert("Copied Successfully!");
+}
+
+function redirectURL(){
+
+    const shortLink =
+    document.getElementById("shortUrl").innerText;
+
+    const shortID =
+    shortLink.split("/").pop();
+
+    const originalURL =
+    urlDatabase[shortID];
+
+    if(originalURL){
+        window.open(originalURL,"_blank");
+    }
+    else{
+        alert("URL Not Found");
+    }
+}
+
+</script>
+
+</body>
+</html>
